@@ -5,12 +5,16 @@ const ExpenseForm = ({ addExpense }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    addExpense({ ...form, amount: parseFloat(form.amount) });
+    addExpense({
+      ...form,
+      amount: parseFloat(form.amount),
+      date: new Date().toISOString() // store date in ISO format for easier filtering
+    });
     setForm({ title: "", amount: "", category: "" });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow flex space-x-4">
+    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow flex flex-wrap gap-4">
       <input
         className="border p-2 flex-1"
         placeholder="Expense Title"

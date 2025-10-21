@@ -7,18 +7,18 @@ import Settings from "./components/Settings";
 
 function App() {
   const [activeTab, setActiveTab] = useState("Dashboard");
-  const [expenses, setExpenses] = useState([]);
+  const [expenses, setExpenses] = useState([]); // all expenses stored here
 
   const renderContent = () => {
     switch (activeTab) {
       case "Dashboard":
-        return <Dashboard />;
+        return <Dashboard setExpenses={setExpenses} />;
       case "Reports":
         return <Reports expenses={expenses} />;
       case "Settings":
         return <Settings />;
       default:
-        return <Dashboard />;
+        return <Dashboard setExpenses={setExpenses} />;
     }
   };
 
