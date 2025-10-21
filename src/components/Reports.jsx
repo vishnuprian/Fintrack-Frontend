@@ -1,38 +1,36 @@
 import React from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
+ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function Reports({ analytics }) {
-  const { by_category = {}, by_day = {}, total_spent = 0 } = analytics || {};
-
-  const catData = Object.entries(by_category).map(([k, v]) => ({ name: k, value: Number(v) }));
-  const dayData = Object.entries(by_day)
-    .sort(([a], [b]) => new Date(a) - new Date(b))
-    .map(([k, v]) => ({ date: k, value: Number(v) }));
+const Reports = ({ expenses }) => {
+  const categories = [...new Set(expenses.map(e => e.category))];
+  const data = {
+    labels: categories,
+    datasets: [
+      {
+        label: "Expenses (₹)",
+        data: categories.map(cat =>
+          expenses.filter(e => e.category === cat).reduce((a, b) => a + b.amount, 0)
+        ),
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.7)",
+          "rgba(54, 162, 235, 0.7)",
+          "rgba(255, 206, 86, 0.7)",
+          "rgba(75, 192, 192, 0.7)",
+          "rgba(153, 102, 255, 0.7)",
+        ],
+      },
+    ],
+  };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 w-full">
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <h3 className="text-lg font-semibold">Expense Breakdown</h3>
-          <div className="text-sm text-slate-500">View spending by category</div>
-        </div>
-        <div className="text-right">
-          <div className="text-2xl font-bold">₹{Number(total_spent).toFixed(2)}</div>
-          <div className="text-sm text-slate-500">This month</div>
-        </div>
-      </div>
-
-      <div style={{ height: 300 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={catData}>
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip formatter={(value) => `₹${Number(value).toFixed(2)}`} />
-            <Bar dataKey="value" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+    <div className="bg-white p-4 rounded shadow">
+      <h2 className="text-lg font-bold mb-4">Expense Distribution</h2>
+      {expenses.length > 0 ? <Pie data={data} /> : <p>No expenses yet.</p>}
     </div>
   );
-}
+};
+
+export default Reports;
